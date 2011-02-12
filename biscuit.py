@@ -14,6 +14,7 @@ def postcommithook(environ):
     payload = parse_qs(environ['wsgi.input'].read())['payload'][0]
     meta = loads(payload)
     for commit in meta['commits']:
+        print 'Running build/test for commit %s' % commit['id']
         err = config.run()
         if err is None:
             send_mail("Successfully built/tested %s at revision %s" %
@@ -21,6 +22,7 @@ def postcommithook(environ):
         else:
             send_mail("Building/testing %s at revision %s failed:\n\n%s" %
                       (config.PROJECT_NAME, commit['id'], err))
+        print 'done'
     return 'yo build done'
 
 def send_mail(body):
