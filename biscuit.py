@@ -2,6 +2,7 @@ from os import chdir
 from shutil import rmtree
 from tempfile import mkdtemp
 from smtplib import SMTP
+from urlparse import parse_qs
 from json import loads
 
 from nano import NanoApplication
@@ -12,7 +13,8 @@ app = NanoApplication(debug=True)
 
 @app.route('/postcommithook/')
 def postcommithook(environ):
-    meta = loads(environ['wsgi.input'].read())
+    payload = parse_qs(environ['wsgi.input'].read())['payload'][0]
+    meta = loads(payload)
     for commit in meta['commits']:
         tempdir = mkdtemp()
         try:
@@ -25,7 +27,6 @@ def postcommithook(environ):
                           (config.PROJECT_NAME, commit['id'], err))
         finally:
             rmtree(tempdir)
-
     return 'yo build done'
 
 def send_mail(body):
