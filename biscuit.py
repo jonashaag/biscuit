@@ -38,4 +38,5 @@ def send_mail(body):
 
 if __name__ == '__main__':
     import bjoern
-    bjoern.run(app, '0.0.0.0', 8080)
+    bjoern.run(app, getattr(config, 'HTTP_HOST', '0.0.0.0'),
+                    getattr(config, 'HTTP_PORT', 8080))
