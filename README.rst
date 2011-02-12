@@ -7,6 +7,7 @@ Requirements
 Setup
 -----
 Create config file that contain the following attributes:
+
 ``PROJECT_NAME``
    Name of the project to continuously integrate
 ``EMAIL_SENDER_HOST``
@@ -19,5 +20,13 @@ Create config file that contain the following attributes:
    A function, called without arguments, that does the buildout/testing stuff.
    Returns nothing on build/test success and a string containing an error
    description on failure.
+``HTTP_HOST`` (optional, defaults to "0.0.0.0")
+``HTTP_PORT`` (optional, defaults to 8080)
+   Where should the server listen?
+
+
+Repo Setup
+----------
+Add a post-commit hook for ``HTTP_HOST:HTTP_PORT/postcommithook/``
 
 .. _Nano: https://github.com/jonashaag/Nano
