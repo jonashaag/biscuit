@@ -20,8 +20,7 @@ Create config file that contain the following attributes:
    A function, called without arguments, that does the buildout/testing stuff.
    Returns nothing on build/test success and a string containing an error
    description on failure.
-``HTTP_HOST`` (optional, defaults to "0.0.0.0")
-``HTTP_PORT`` (optional, defaults to 8080)
+``HTTP_HOST`` and ``HTTP_PORT`` (optional, defaults to "0.0.0.0" and 8080)
    Where should the server listen?
 
 
