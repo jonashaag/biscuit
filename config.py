@@ -34,10 +34,7 @@ if __name__ == '__main__':
         'adieu/django-dbindexer',
         'django-mongodb-engine/mongodb-engine'
     ]:
-        if 'nonrel' in repo:
-            call('git', 'clone', '/jonas/dev/django/nonrel', 'django-nonrel')
-        else:
-            call('git', 'clone', 'git://github.com/' + repo)
+        call('git', 'clone', 'git://github.com/' + repo)
         chdir(repo.split('/')[1])
         call('python', 'setup.py', 'install')
         chdir('..')
