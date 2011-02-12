@@ -14,7 +14,7 @@ def run():
     try:
         chdir(tempdir)
         proc = Popen(['sh', '-c', 'virtualenv env > stdout 2> stderr; '
-                                  'source env/bin/activate; sh -c '
+                                  '. env/bin/activate; sh -c '
                                   '"python %s >> stdout 2>> stderr"' % __file__])
         if proc.wait() != 0:
             if exists('stderr') and exists('stdout'):
