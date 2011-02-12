@@ -1,6 +1,4 @@
 from os import chdir
-from shutil import rmtree
-from tempfile import mkdtemp
 from smtplib import SMTP
 from urlparse import parse_qs
 from json import loads
@@ -16,17 +14,13 @@ def postcommithook(environ):
     payload = parse_qs(environ['wsgi.input'].read())['payload'][0]
     meta = loads(payload)
     for commit in meta['commits']:
-        tempdir = mkdtemp()
-        try:
-            err = config.run(tempdir)
-            if err is None:
-                send_mail("Successfully built/tested %s at revision %s" %
-                          (config.PROJECT_NAME, commit['id']))
-            else:
-                send_mail("Building/testing %s at revision %s failed:\n\n%s" %
-                          (config.PROJECT_NAME, commit['id'], err))
-        finally:
-            rmtree(tempdir)
+        err = config.run()
+        if err is None:
+            send_mail("Successfully built/tested %s at revision %s" %
+                      (config.PROJECT_NAME, commit['id']))
+        else:
+            send_mail("Building/testing %s at revision %s failed:\n\n%s" %
+                      (config.PROJECT_NAME, commit['id'], err))
     return 'yo build done'
 
 def send_mail(body):

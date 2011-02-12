@@ -7,16 +7,23 @@ PROJECT_NAME = 'django-mongodb-engine'
 
 def run(tempdir):
     from subprocess import Popen, PIPE
-    chdir(tempdir)
-    proc = Popen(['sh', '-c', 'virtualenv env > stdout 2> stderr; '
-                              'source env/bin/activate; sh -c '
-                              '"python %s >> stdout 2>> stderr"' % __file__])
-    if proc.wait() != 0:
-        if exists('stderr') and exists('stdout'):
-            return "stdout:\n%s\n\nstderr:\n%s" % (open('stdout').read(),
-                                                   open('stderr').read())
-        else:
-            return "Setup failure"
+    from tempfile import mkdtemp
+    from shutil import rmtree
+
+    tempdir = mkdtemp()
+    try:
+        chdir(tempdir)
+        proc = Popen(['sh', '-c', 'virtualenv env > stdout 2> stderr; '
+                                  'source env/bin/activate; sh -c '
+                                  '"python %s >> stdout 2>> stderr"' % __file__])
+        if proc.wait() != 0:
+            if exists('stderr') and exists('stdout'):
+                return "stdout:\n%s\n\nstderr:\n%s" % (open('stdout').read(),
+                                                       open('stderr').read())
+            else:
+                return "Setup failure"
+    finally:
+        rmtree(tempdir)
 
 if __name__ == '__main__':
     from subprocess import check_call
