@@ -5,7 +5,7 @@ from private_config import *
 
 PROJECT_NAME = 'django-mongodb-engine'
 
-def run(tempdir):
+def run():
     from subprocess import Popen, PIPE
     from tempfile import mkdtemp
     from shutil import rmtree
