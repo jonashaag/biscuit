@@ -1,15 +1,14 @@
 from os import chdir
 from os.path import exists
+from subprocess import Popen, PIPE, check_call
+from tempfile import mkdtemp
+from shutil import rmtree
 
 from private_config import *
 
 PROJECT_NAME = 'django-mongodb-engine'
 
 def run():
-    from subprocess import Popen, PIPE
-    from tempfile import mkdtemp
-    from shutil import rmtree
-
     tempdir = mkdtemp()
     try:
         chdir(tempdir)
@@ -26,8 +25,7 @@ def run():
         rmtree(tempdir)
 
 if __name__ == '__main__':
-    from subprocess import check_call
-    call = lambda *args: check_call(args)
+    call = lambda *args, **kwargs: check_call(args, **kwargs)
     for repo in [
         'adieu/django-nonrel',
         'adieu/djangotoolbox',
@@ -36,7 +34,7 @@ if __name__ == '__main__':
     ]:
         call('git', 'clone', 'git://github.com/' + repo)
         chdir(repo.split('/')[1])
-        call('python', 'setup.py', 'install')
+        call('python', 'setup.py', 'install', stdout=PIPE)
         chdir('..')
 
     chdir('mongodb-engine/tests')
