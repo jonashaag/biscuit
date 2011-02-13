@@ -34,7 +34,7 @@ if __name__ == '__main__':
     ]:
         call('git', 'clone', 'git://github.com/' + repo)
         chdir(repo.split('/')[1])
-        call('python', 'setup.py', 'install', stdout=devnull)
+        call('python', 'setup.py', 'install', stdout=open(devnull, 'w'))
         chdir('..')
 
     chdir('mongodb-engine/tests')
