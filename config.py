@@ -12,15 +12,19 @@ def run():
     tempdir = mkdtemp()
     try:
         chdir(tempdir)
-        proc = Popen(['sh', '-c', 'virtualenv env > stdout 2> stderr; '
-                                  '. env/bin/activate; sh -c '
-                                  '"python %s >> stdout 2>> stderr"' % __file__])
-        if proc.wait() != 0:
-            if exists('stderr') and exists('stdout'):
-                return "stdout:\n%s\n\nstderr:\n%s" % (open('stdout').read(),
-                                                       open('stderr').read())
-            else:
-                return "Setup failure"
+        for pyver in ['2.4', '2.5', '2.6']:
+            proc = Popen(['sh', '-c',
+                'virtualenv env -p /usr/bin/python%s > stdout 2> stderr; '
+                '. env/bin/activate; sh -c '
+                '"python %s >> stdout 2>> stderr"' % (pyver, __file__)
+            ])
+            if proc.wait() != 0:
+                if exists('stderr') and exists('stdout'):
+                    return "(%s)\n\nstdout:\n%s\n\nstderr:\n%s" % (
+                        pyver, open('stdout').read(), open('stderr').read())
+                else:
+                    return "Setup failure (%s)" % pyver
+            rmtree('env')
     finally:
         rmtree(tempdir)
 
@@ -32,8 +36,10 @@ if __name__ == '__main__':
         'adieu/django-dbindexer',
         'django-mongodb-engine/mongodb-engine'
     ]:
-        call('git', 'clone', 'git://github.com/' + repo)
-        chdir(repo.split('/')[1])
+        directory = repo.split('/')[1]
+        if not exists(directory):
+            call('git', 'clone', 'git://github.com/' + repo)
+        chdir(directory)
         call('python', 'setup.py', 'install', stdout=open(devnull, 'w'))
         chdir('..')
 
