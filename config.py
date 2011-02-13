@@ -1,4 +1,4 @@
-from os import chdir
+from os import chdir, devnull
 from os.path import exists
 from subprocess import Popen, PIPE, check_call
 from tempfile import mkdtemp
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     ]:
         call('git', 'clone', 'git://github.com/' + repo)
         chdir(repo.split('/')[1])
-        call('python', 'setup.py', 'install', stdout=PIPE)
+        call('python', 'setup.py', 'install', stdout=devnull)
         chdir('..')
 
     chdir('mongodb-engine/tests')
