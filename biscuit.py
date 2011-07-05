@@ -1,13 +1,11 @@
-from os import chdir
 from smtplib import SMTP
 from urlparse import parse_qs
 from json import loads
 
 from nano import NanoApplication
+app = NanoApplication(debug=True)
 
 import config
-
-app = NanoApplication(debug=True)
 
 @app.route('/postcommithook/')
 def postcommithook(environ):

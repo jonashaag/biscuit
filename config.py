@@ -1,47 +1,13 @@
-from os import chdir, devnull
-from os.path import exists
-from subprocess import Popen, PIPE, check_call
-from tempfile import mkdtemp
-from shutil import rmtree
-
-from private_config import *
-
-PROJECT_NAME = 'django-mongodb-engine'
+PROJECT_NAME = 'project1234'
+EMAIL_SENDER_HOST = '127.0.0.1'
+EMAIL_SENDER_EMAIL = 'noreply@example.org'
+EMAIL_RECEIVER = 'john@wayne.tld'
 
 def run():
-    tempdir = mkdtemp()
-    try:
-        chdir(tempdir)
-        for pyver in ['2.4', '2.5', '2.6']:
-            proc = Popen(['sh', '-c',
-                'virtualenv env -p /usr/bin/python%s > stdout 2> stderr; '
-                '. env/bin/activate; sh -c '
-                '"python %s >> stdout 2>> stderr"' % (pyver, __file__)
-            ])
-            if proc.wait() != 0:
-                if exists('stderr') and exists('stdout'):
-                    return "(%s)\n\nstdout:\n%s\n\nstderr:\n%s" % (
-                        pyver, open('stdout').read(), open('stderr').read())
-                else:
-                    return "Setup failure (%s)" % pyver
-            rmtree('env')
-    finally:
-        rmtree(tempdir)
-
-if __name__ == '__main__':
-    call = lambda *args, **kwargs: check_call(args, **kwargs)
-    for repo in [
-        'adieu/django-nonrel',
-        'adieu/djangotoolbox',
-        'adieu/django-dbindexer',
-        'django-mongodb-engine/mongodb-engine'
-    ]:
-        directory = repo.split('/')[1]
-        if not exists(directory):
-            call('git', 'clone', 'git://github.com/' + repo)
-        chdir(directory)
-        call('python', 'setup.py', 'install', stdout=open(devnull, 'w'))
-        chdir('..')
-
-    chdir('mongodb-engine/tests')
-    call('./run-all.py')
+    test_failures = run_tests()
+    if not test_failures:
+        # return None to indicate everything's fine.
+        return None
+    else:
+        # if something went wrong, return a string that is included in the mail.
+        return '%d failures' % len(test_failures)
